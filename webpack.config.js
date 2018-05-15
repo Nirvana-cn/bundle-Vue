@@ -1,4 +1,6 @@
 const webpack=require('webpack');
+const path=require('path');
+const SpritesmithPlugin = require('webpack-spritesmith');
 // const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 module.exports={
@@ -50,8 +52,29 @@ module.exports={
             'vue$':'vue/dist/vue.esm.js'
         },
         extensions: ['*','.js','.vue','.json']
-    }
+    },
     // plugins: [
     //     new VueLoaderPlugin()
     // ]
+    plugins: [
+        new SpritesmithPlugin({
+            // 目标小图标
+            src: {
+                cwd: path.resolve(__dirname, './src/static/icon'),
+                glob: '*.png'
+            },
+            // 输出雪碧图文件及样式文件
+            target: {
+                image: path.resolve(__dirname, './public/sprite.png'),
+                css: path.resolve(__dirname, './public/sprite.css')
+            },
+            // 样式文件中调用雪碧图地址写法
+            apiOptions: {
+                cssImageRef: './sprite.png'
+            },
+            spritesmithOptions: {
+                algorithm: 'top-down'
+            }
+        })
+    ]
 }

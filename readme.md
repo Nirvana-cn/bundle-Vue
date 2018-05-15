@@ -15,7 +15,18 @@ resolve: {
   }
 ```
 
-使用 url-loader 打包图片
+一、使用 url-loader 打包图片
+
+将图片转化成base64格式的图片，可以极大地减少请求数，因为base64是文本格式，可以直接放在body里。一般对于小于10KB大小的图片进行base64转码
+
+优点：
+- base64格式的图片是文本格式，占用内存小，转换后的大小比例大概为1/3，降低了资源服务器的消耗；
+- 网页中使用base64格式的图片时，不用再请求服务器调用图片资源，减少了服务器访问次数。
+
+缺点：
+- base64格式的文本内容较多，存储在数据库中增大了数据库服务器的压力；
+- 网页加载图片虽然不用访问服务器了，但因为base64格式的内容太多，所以加载网页的速度会降低，可能会影响用户的体验。
+
 ```
 {
   test:/\.(png|jpe?g|gif|svg)$/,
@@ -24,6 +35,34 @@ resolve: {
     limit:10000
   }              
 }
+```
+
+二、 使用webpack-spritesmith生成雪碧图
+
+需要file-loader和webpack-spritesmith插件，webpack-spritesmith将目标图片打包生成一张图片，在页面中并不直接引用图片，而是通过引用webpack-spritesmith生成的类名加载图片
+
+```
+plugins: [
+        new SpritesmithPlugin({
+            // 需要生成雪碧图的目标图片,webpack-spritesmith会打包目标文件夹下的所有图片
+            src: {
+                cwd: path.resolve(__dirname, './src/static/icon'),
+                glob: '*.png'
+            },
+            // 输出雪碧图文件及样式文件
+            target: {
+                image: path.resolve(__dirname, './public/sprite.png'),
+                css: path.resolve(__dirname, './public/sprite.css')
+            },
+            // 样式文件中调用雪碧图地址写法
+            apiOptions: {
+                cssImageRef: './sprite.png'
+            },
+            spritesmithOptions: {
+                algorithm: 'top-down'
+            }
+        })
+    ]
 ```
 
 #### Webpack 4 的一些注意点

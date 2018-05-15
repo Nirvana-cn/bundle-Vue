@@ -12,9 +12,9 @@
 
     export default {
         name: 'app',
-        data () {
+        data() {
             return {
-                message:'welcome vue~'
+                message: 'welcome vue~'
             }
         },
         components: {
@@ -23,6 +23,6 @@
     }
 </script>
 
-<style>
+<style scoped>
 
 </style>

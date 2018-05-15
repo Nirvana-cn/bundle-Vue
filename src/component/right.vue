@@ -4,6 +4,9 @@
         <div>
             <img src="../static/wx.png">
         </div>
+        <div>
+            <i class="icon-snow"></i>
+        </div>
     </div>
 </template>
 
@@ -12,5 +15,6 @@
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
-
+    i
+        display: inline-block
 </style>

@@ -4,8 +4,10 @@
         <div>
             <img src="../static/GitHub.png">
         </div>
+        <div>
+            <i class="icon-logo"></i>
+        </div>
     </div>
-
 </template>
 
 <script type="text/ecmascript-6">
@@ -15,4 +17,6 @@
 <style scoped lang="stylus" rel="stylesheet/stylus">
 .wrapper
     color:#fff
+    i
+        display: inline-block
 </style>
