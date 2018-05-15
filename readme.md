@@ -2,6 +2,30 @@
 
 在不使用vue-cli脚手架工具的情况下，如何配置webpack来对vue文件进行打包编译
 
+webpack.config.js中需要如下配置，才可以打包vue文件
+
+```
+resolve: {
+    alias: {
+        //开发环境使用vue.esm.js',官网有说明
+        'vue$': 'vue/dist/vue.esm.js'
+    },
+    //reuqire加载文件会自动为以下后缀的文件（如：./app.vue可以写成./app了）
+    extensions: ['*', '.js', '.vue', '.json']
+  }
+```
+
+使用 url-loader 打包图片
+```
+{
+  test:/\.(png|jpe?g|gif|svg)$/,
+  loader:'url-loader',
+  options:{
+    limit:10000
+  }              
+}
+```
+
 #### Webpack 4 的一些注意点
 1. webpack4抽离出了webpack-cli，所以我们需要下载2个依赖
 
