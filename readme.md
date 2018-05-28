@@ -65,6 +65,221 @@ plugins: [
     ]
 ```
 
+三、多入口文件配置
+多个入口可以有两种实现方式进行打包
+
+- 一种是没有关系的但是要打包到一起去的，可以写一个数组，实现多个文件打包
+- 另一种就是每一个文件都单独打包成一个文件的
+
+下面就来看看这两种方式的写法
+```
+let path = require('path');
+
+module.exports = {
+    // 1.写成数组的方式就可以打出多入口文件，不过这里打包后的文件都合成了一个
+    // entry: ['./src/index.js', './src/login.js'],
+    // 2.真正实现多入口和多出口需要写成对象的方式
+    entry: {
+        index: './src/index.js',
+        login: './src/login.js'
+    },
+    output: {
+        // 1. filename: 'bundle.js',
+        // 2. [name]就可以将出口文件名和入口文件名一一对应
+        filename: '[name].js',      // 打包后会生成index.js和login.js文件
+        path: path.resolve('dist')
+    }
+}
+```
+四、多页面打包
+
+如果开发的时候不只一个页面，我们需要配置多页面，html-webpack-plugin插件自有办法
+
+```
+let path = require('path');
+let HtmlWebpackPlugin = require('html-webpack-plugin');
+
+module.exports = {
+    // 多页面开发，怎么配置多页面
+    entry: {
+        index: './src/index.js',
+        login: './src/login.js'
+    },
+    // 出口文件  
+    output: {                       
+        filename: '[name].js',
+        path: path.resolve('dist')
+    },
+    plugins: [
+        new HtmlWebpackPlugin({
+            template: './src/index.html',   
+            filename: 'index.html',
+            chunks: ['index']   // 对应关系,index.js对应的是index.html
+        }),
+        new HtmlWebpackPlugin({
+            template: './src/login.html',
+            filename: 'login.html',
+            chunks: ['login']   // 对应关系,login.js对应的是login.html
+        })
+    ]
+}
+```
+
+五、拆分css
+extract-text-webpack-plugin插件会将打包到js里的css文件进行一个拆分
+```
+let path = require('path');
+let HtmlWebpackPlugin = require('html-webpack-plugin');
+// 拆分css样式的插件
+let ExtractTextWebpackPlugin = require('extract-text-webpack-plugin');
+
+module.exports = {
+    entry: './src/index.js',
+    output: {
+        filaneme: 'bundle.js',
+        path: path.resolve('dist')
+    },
+    module: {
+        rules: [
+            {
+                test: /\.css$/,
+                use: ExtractTextWebpackPlugin.extract({
+                    // 将css用link的方式引入就不再需要style-loader了
+                    use: 'css-loader'       
+                })
+            }
+        ]
+    },
+    plugins: [
+        new HtmlWebpackPlugin({
+            template: './src/index.html',
+        }),
+        // 拆分后会把css文件放到dist目录下的css/style.css
+        new ExtractTextWebpackPlugin('css/style.css')  
+    ]
+}
+```
+
+六、热更新
+
+在配置devServer的时候，如果hot为true，就代表开启了热更新
+
+But这并没那么简单，因为热更新还需要配置一个webpack自带的插件并且还要在主要js文件里检查是否有module.hot
+
+```
+// webpack.config.js
+let webpack = require('webpack');
+
+module.exports = {
+    plugins: [
+        // 热更新，热更新不是刷新
+        new webpack.HotModuleReplacementPlugin()
+    ],
+    devServer: {
+        contentBase: './dist',
+        hot: true,
+        port: 3000
+    }
+}
+
+// 此时还没完虽然配置了插件和开启了热更新，但实际上并不会生效
+
+// index.js
+let a = 'hello world';
+document.body.innerHTML = a;
+console.log('这是webpack打包的入口文件');
+
+// 还需要在主要的js文件里写入下面这段代码
+if (module.hot) {
+    // 实现热更新
+    module.hot.accept();
+}
+```
+
+热更新的好处可能在vue或者react中有更大的发挥，其中某一个组件被修改的时候就会针对这个组件进行热更新了
+
+七、reslove解析
+
+在webpack的配置中，resolve我们常用来配置别名和省略后缀名
+
+```
+module.exports = {
+    resolve: {
+        // 别名
+        alias: {
+            $: './src/jquery.js'
+        },
+        // 省略后缀
+        extensions: ['.js', '.json', '.css']
+    },
+}
+```
+
+八、指定webpack配置文件
+
+在package.json的脚步里，我们可以配置调用不同的webpack配置文件进行打包
+
+```
+"scripts": {
+    "start": "webpack --config webpack.config.vue.js"
+  }
+```
+
+九、提取公共代码
+
+```
+// 假设a.js和b.js都同时引入了jquery.js和一个写好的utils.js
+// a.js和b.js
+import $ from 'jquery';
+import {sum} from 'utils';
+```
+
+那么他们两个js中其中公共部分的代码就是jquery和utils里的代码了
+
+```
+module.exports = {
+    entry: {
+        a: './src/a.js',
+        b: './src/b.js'
+    },
+    output: {
+        filename: '[name].js',
+        path: path.resolve('dust')
+    },
+    // 提取公共代码
++   optimization: {
+        splitChunks: {
+            cacheGroups: {
+                vendor: {   // 抽离第三方插件
+                    test: /node_modules/,   // 指定是node_modules下的第三方包
+                    chunks: 'initial',
+                    name: 'vendor',  // 打包后的文件名，任意命名    
+                    // 设置优先级，防止和自定义的公共代码提取时被覆盖，不进行打包
+                    priority: 10    
+                },
+                utils: { // 抽离自己写的公共代码，utils这个名字可以随意起
+                    chunks: 'initial',
+                    name: 'utils',  // 任意命名
+                    minSize: 0    // 只要超出0字节就生成一个新包
+                }
+            }
+        }
++   },
+    plugins: [
+        new HtmlWebpackPlugin({
+            filename: 'a.html',
+            template: './src/index.html',  // 以index.html为模板
++           chunks: ['vendor', 'a']
+        }),
+        new HtmlWebpackPlugin({
+            filename: 'b.html',
+            template: './src/index.html',  // 以index.html为模板
++           chunks: ['vendor', 'b']
+        })
+    ]
+}
+```
+
 #### Webpack 4 的一些注意点
 1. webpack4抽离出了webpack-cli，所以我们需要下载2个依赖
 

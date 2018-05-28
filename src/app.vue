@@ -1,8 +1,13 @@
 <template>
     <div id="app">
         {{message}}
-        <left></left>
-        <right></right>
+        <!--<left></left>-->
+        <!--<right></right>-->
+        <p>
+            <router-link to="/page1">go to page 1</router-link>
+            <router-link to="/page2">go to page 2</router-link>
+        </p>
+        <router-view></router-view>
     </div>
 </template>
 

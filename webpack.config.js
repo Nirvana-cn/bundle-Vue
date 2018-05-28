@@ -1,19 +1,22 @@
 const webpack=require('webpack');
 const path=require('path');
+const htmlWebapckPlugin=require('html-webpack-plugin');
+const extractTextWebpackPlugin=require('extract-text-webpack-plugin');
 const SpritesmithPlugin = require('webpack-spritesmith');
-// const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 module.exports={
-    entry:__dirname+'/src/main.js',
+    entry:'./src/main.js',
     output: {
-        path:__dirname+'/public',
+        path:path.resolve('public'),
         filename:'bundle.js'
     },
-    devtool: "none",
+    mode:'development',
     devServer: {
         contentBase:'./public',
         host:'localhost',
         port:'8080',
+        open:true,  //自动打开浏览器
+        hot:true,   //开启热更新
         inline:true,
         historyApiFallback:true
     },
@@ -26,7 +29,9 @@ module.exports={
             },
             {
                 test:/\.css$/,
-                use:['style-loader','css-loader'],
+                use:extractTextWebpackPlugin.extract({
+                    use:'css-loader'
+                }),
                 exclude: /node_modules/
             },
             {
@@ -53,20 +58,17 @@ module.exports={
         },
         extensions: ['*','.js','.vue','.json']
     },
-    // plugins: [
-    //     new VueLoaderPlugin()
-    // ]
     plugins: [
         new SpritesmithPlugin({
             // 目标小图标
             src: {
-                cwd: path.resolve(__dirname, './src/static/icon'),
+                cwd: path.resolve('src/static/icon'),
                 glob: '*.png'
             },
             // 输出雪碧图文件及样式文件
             target: {
-                image: path.resolve(__dirname, './public/sprite.png'),
-                css: path.resolve(__dirname, './public/sprite.css')
+                image: path.resolve('public/css/sprite.png'),
+                css: path.resolve('public/css/sprite.css')
             },
             // 样式文件中调用雪碧图地址写法
             apiOptions: {
@@ -75,6 +77,12 @@ module.exports={
             spritesmithOptions: {
                 algorithm: 'top-down'
             }
-        })
+        }),
+        new htmlWebapckPlugin({
+            template:'./src/index.html',
+            hash:true
+        }),
+        new extractTextWebpackPlugin('css/style.css'),
+        new webpack.HotMouduleReplacementPlugin()
     ]
 }
