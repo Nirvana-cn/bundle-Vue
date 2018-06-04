@@ -280,6 +280,37 @@ module.exports = {
 }
 ```
 
+十、HTML压缩
+
+使用html-webpack-plugin 自动化注入JS、CSS打包HTML文件时，很少会为其添加配置项，直接复制样例配置就行。
+
+```
+new HtmlWebpackPlugin({
+            template: __dirname + '/views/index.html',
+            filename: '../index.html',
+            minify: {
+                removeComments: true,
+                collapseWhitespace: true,
+                removeRedundantAttributes: true,
+                useShortDoctype: true,
+                removeEmptyAttributes: true,
+                removeStyleLinkTypeAttributes: true,
+                keepClosingSlash: true,
+                minifyJS: true,
+                minifyCSS: true,
+                minifyURLs: true,
+            },
+            chunksSortMode: 'dependency'
+        })
+```
+
+十一、JS压缩
+
+```
+new webpack.optimize.UglifyJsPlugin()
+```
+
+
 #### Webpack 4 的一些注意点
 1. webpack4抽离出了webpack-cli，所以我们需要下载2个依赖
 
