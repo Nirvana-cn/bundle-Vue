@@ -2,18 +2,92 @@
 
 在不使用vue-cli脚手架工具的情况下，如何配置webpack来对vue文件进行打包编译
 
-webpack.config.js中需要如下配置，才可以打包vue文件
+使用webpack打包vue文件，除了需要引入vue-loader以外，还需要确定vue的构建版本！！！
+
+仔细阅读vuejs官网-教程-安装-命令行工具那一块
+
+https://cn.vuejs.org/v2/guide/installation.html
+
+官网已经说明了在NPM包的dist/目录下有很多不同的Vue.js构建版本。
+
+而使用哪一个构建版本取决去你引入vue的方式。我是使用ES6规范引入vue的，即使用import语法导入vue模块，所以需要将vue的构建版本设置为vue.esm.js。
+
+如果你使用commonjs规范引入vue，即使用require语法导入vue模块，那么就需要vue的构建版本设置为vue.commonjs.js。
+
 
 ```
-resolve: {
-    alias: {
-        //开发环境使用vue.esm.js',官网有说明
-        'vue$': 'vue/dist/vue.esm.js'
+const webpack=require('webpack');
+
+module.exports={
+    entry:__dirname+'/src/main.js',
+    output: {
+        path:__dirname+'/public',
+        filename:'bundle.js'
     },
-    //reuqire加载文件会自动为以下后缀的文件（如：./app.vue可以写成./app了）
-    extensions: ['*', '.js', '.vue', '.json']
-  }
+    devtool: "none",
+    devServer: {
+        contentBase:'./public',
+        host:'localhost',
+        port:'8080',
+        inline:true,
+        historyApiFallback:true
+    },
+    module:{
+        rules:[
+            {
+                test:/\.js$/,
+                use:'babel-loader',
+                exclude: /node_modules/
+            },
+            {
+                test:/\.css$/,
+                use:['style-loader','css-loader'],
+                exclude: /node_modules/
+            },
+            {
+                test:/\.vue$/,
+                use:'vue-loader'
+            }
+        ]
+    },
+    // 还需要添加以下内容
+    resolve: {
+        alias: {
+            //确定vue的构建版本
+            'vue$':'vue/dist/vue.esm.js'
+        },
+        extensions: ['*','.js','.vue','.json']
+    }
+}
 ```
+
+#### ** resolve.alias简介
+ 
+resolve.alias 配置项通过别名来把原导入路径映射成一个新的导入路径。例如使用以下配置：
+```
+// Webpack alias 配置
+resolve:{
+  alias:{
+    components: './src/components/'
+  }
+}
+```
+当你通过 import Button from 'components/button' 导入时，实际上被 alias 等价替换成了 import Button from './src/components/button'。
+
+以上 alias 配置的含义是把导入语句里的 components 关键字替换成 ./src/components/。
+
+alias 还支持 $ 符号来缩小范围到只命中以关键字结尾的导入语句：
+
+```
+resolve:{
+  alias:{
+    'react$': '/path/to/react.min.js'
+  }
+}
+```
+
+react$ 只会命中以 react 结尾的导入语句，即只会把 import 'react' 关键字替换成 import '/path/to/react.min.js'。
+
 
 一、使用 url-loader 打包图片
 
@@ -312,6 +386,7 @@ new webpack.optimize.UglifyJsPlugin()
 
 
 #### Webpack 4 的一些注意点
+
 1. webpack4抽离出了webpack-cli，所以我们需要下载2个依赖
 
 ```
