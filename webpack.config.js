@@ -25,7 +25,10 @@ module.exports={
             {
                 test:/\.js$/,
                 use:'babel-loader',
-                exclude: /node_modules/
+                exclude: [
+                    path.resolve('node_modules'),
+                    path.resolve('src/script')
+                ]
             },
             {
                 test:/\.css$/,
@@ -47,14 +50,16 @@ module.exports={
                 test:/\.(png|jpe?g|gif|svg)$/,
                 loader:'url-loader',
                 options:{
-                    limit:10000
+                    limit:1000
                 }
             }
-        ]
+        ],
+        noParse: /jquery/
     },
     resolve: {
         alias: {
             'vue$':'vue/dist/vue.esm.js'
+            // 'vue$':'vue/dist/vue.common.js'
         },
         extensions: ['*','.js','.vue','.json']
     },
@@ -62,7 +67,7 @@ module.exports={
         new SpritesmithPlugin({
             // 目标小图标
             src: {
-                cwd: path.resolve('src/static/icon'),
+                cwd: path.resolve('src/static'),
                 glob: '*.png'
             },
             // 输出雪碧图文件及样式文件
@@ -83,6 +88,6 @@ module.exports={
             hash:true
         }),
         new extractTextWebpackPlugin('css/style.css'),
-        new webpack.HotMouduleReplacementPlugin()
+        new webpack.HotModuleReplacementPlugin()
     ]
 }

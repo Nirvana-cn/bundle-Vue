@@ -1,4 +1,5 @@
 import Vue from 'vue'
+// const Vue = require('vue')
 import VueRouter from 'vue-router'
 import App from './app.vue'
 import './style/reset.css'

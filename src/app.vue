@@ -1,6 +1,7 @@
 <template>
     <div id="app">
         {{message}}
+        <picture-loop :pictures="images"></picture-loop>
         <!--<left></left>-->
         <!--<right></right>-->
         <p>
@@ -14,16 +15,18 @@
 <script type="text/ecmascript-6">
     import left from './component/left.vue'
     import right from './component/right.vue'
+    import PictureLoop from './component/PictureLoop.vue'
 
     export default {
         name: 'app',
         data() {
             return {
-                message: 'welcome vue~'
+                message: 'welcome vue~',
+                images:['icon-finding-the-key','icon-hiding-the-map','icon-lets-get-out-of-here','icon-the-battle','icon-theres-the-buoy','icon-finding-the-key']
             }
         },
         components: {
-            left, right
+            left, right, PictureLoop
         }
     }
 </script>

@@ -2,7 +2,7 @@
     <div class="wrapper">
         <div>This is left!</div>
         <div>
-            <img src="../static/GitHub.png">
+            <i class="icon-GitHub"></i>
         </div>
         <div>
             <i class="icon-logo"></i>

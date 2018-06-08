@@ -2,7 +2,7 @@
     <div>
         <div>This is right!</div>
         <div>
-            <img src="../static/wx.png">
+            <i class="icon-wx"></i>
         </div>
         <div>
             <i class="icon-snow"></i>

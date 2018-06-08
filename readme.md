@@ -384,6 +384,27 @@ new HtmlWebpackPlugin({
 new webpack.optimize.UglifyJsPlugin()
 ```
 
+十二、noParse
+
+noParse 配置项可以让 Webpack 忽略对部分没采用模块化的文件的递归解析和处理，这样做的好处是能提高构建性能。 原因是一些库例如 jQuery 、ChartJS 它们庞大又没有采用模块化标准，让 Webpack 去解析这些文件耗时又没有意义。
+
+noParse 是可选配置项，类型需要是 RegExp、[RegExp]、function 其中一个。
+
+例如想要忽略掉 jQuery 、ChartJS，可以使用如下代码：
+
+```
+module: {
+  // 使用正则表达式
+  noParse: /jquery|chartjs/
+  
+  // 使用函数，从 Webpack 3.0.0 开始支持
+  noParse: (content)=> {
+    // content 代表一个模块的文件路径
+    // 返回 true or false
+    return /jquery|chartjs/.test(content);
+  }  
+}
+```
 
 #### Webpack 4 的一些注意点
 
