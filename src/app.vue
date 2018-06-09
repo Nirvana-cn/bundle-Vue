@@ -1,7 +1,7 @@
 <template>
     <div id="app">
         {{message}}
-        <picture-loop :pictures="images"></picture-loop>
+        <picture-loop :parameter="init"></picture-loop>
         <!--<left></left>-->
         <!--<right></right>-->
         <p>
@@ -22,7 +22,11 @@
         data() {
             return {
                 message: 'welcome vue~',
-                images:['icon-finding-the-key','icon-hiding-the-map','icon-lets-get-out-of-here','icon-the-battle','icon-theres-the-buoy','icon-finding-the-key']
+                init:{
+                    images:['icon-finding-the-key','icon-hiding-the-map','icon-lets-get-out-of-here','icon-the-battle','icon-theres-the-buoy','icon-finding-the-key'],
+                    width:'680',
+                    height:'460'
+                }
             }
         },
         components: {

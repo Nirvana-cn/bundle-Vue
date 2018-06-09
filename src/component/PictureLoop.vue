@@ -4,7 +4,7 @@
         <div class="container">
             <div class="wrapper">
                 <div class="content">
-                    <figure class="slide" v-for="pic in pictures">
+                    <figure class="slide" v-for="pic in parameter.images">
                         <i :class="pic"></i>
                     </figure>
                 </div>
@@ -15,61 +15,74 @@
 </template>
 
 <script type="text/ecmascript-6">
-    var content=$('.content');
-
     export default {
         data() {
             return {
                 message: 'This is picture loop',
-                current: 1
+                current: 1,
+                content: '',
+                time: ''
             }
         },
         computed: {
-          count() {
-              return this.$props.pictures.length
-          }
+            count() {
+                return this.$props.parameter.images.length
+            }
         },
-        props:[
-            'pictures'
+        props: [
+            'parameter'
         ],
         mounted() {
-            $('.content').css('width',680 * this.count);
+            $('.wrapper').css({'width': this.$props.parameter.width, 'height': this.$props.parameter.height});
+            $('figure').css({'width': this.$props.parameter.width, 'height': this.$props.parameter.height});
+            this.content = $('.content');
+            this.time = $('.time');
+            this.content.css({'width': 680 * this.count, 'height': this.$props.parameter.height});
             setInterval(this.loop, 5000)
+            this.startTimeIndicator(5000)
         },
         methods: {
-            startTimeIndicator() {
-                $timeIndicator.animate({
-                    width: '680px'
-                }, slideInterval)
+            startTimeIndicator(during) {
+                this.time.animate({
+                    width: this.$props.parameter.width
+                }, during)
             },
             loop() {
-                if(this.current===6){
-                    content.css({'transition':'all 0s linear','transform':'translateX(0px)'});
+                this.time.stop().css('width', 0);
+                let distance = 680 * this.current;
+                if (this.current === 5) {
+                    this.content.css({'transition': 'all 2s linear', 'transform': 'translateX(-' + distance + 'px)'});
                     this.current = 1;
+                    setTimeout(() => {
+                        this.content.css({'transition': 'all 0s linear', 'transform': 'translateX(0px)'});
+                        this.startTimeIndicator(3000);
+                    }, 2000);
                     return;
                 }
-                let distance = 680 * this.current;
-                content.css({'transition':'all 2s linear','transform':'translateX(-'+distance+'px)'});
-                this.current++
+                this.content.css({'transition': 'all 2s linear', 'transform': 'translateX(-' + distance + 'px)'});
+                this.current++;
+                setTimeout(() => {
+                    this.startTimeIndicator(3000)
+                }, 2000);
             }
         }
     }
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
-.wrapper
-    position: relative
-    width:680px
-    height:460px
-    border:1px solid #000;
-    overflow: hidden
-    .content
-        position: absolute
-        height:460px
-        figure
-            display: inline-block
-            width:680px
-            height:460px
-            i
+    .wrapper
+        position: relative
+        border: 1px solid #000;
+        overflow: hidden
+        .content
+            position: absolute
+            figure
                 display: inline-block
+                i
+                    display: inline-block
+
+    .time
+        width: 0;
+        height: 5px;
+        background: #faa;
 </style>
