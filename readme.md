@@ -88,6 +88,7 @@ resolve:{
 
 react$ 只会命中以 react 结尾的导入语句，即只会把 import 'react' 关键字替换成 import '/path/to/react.min.js'。
 
+### 常用loader以及plugin
 
 一、使用 url-loader 打包图片
 
