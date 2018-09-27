@@ -15,6 +15,7 @@
 </template>
 
 <script type="text/ecmascript-6">
+    import $ from 'jquery'
     export default {
         data() {
             return {

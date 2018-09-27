@@ -302,6 +302,8 @@ module.exports = {
 
 九、提取公共代码
 
+在webpack4之前，提取公共代码都是通过一个叫CommonsChunkPlugin的插件来办到的。到了4以后，内置了一个一模一样的功能，而且起了一个好听的名字叫“优化”
+
 ```
 // 假设a.js和b.js都同时引入了jquery.js和一个写好的utils.js
 // a.js和b.js
@@ -354,6 +356,24 @@ module.exports = {
     ]
 }
 ```
+Webpack3内置了专门用于提取多个 Chunk 中公共部分的插件 CommonsChunkPlugin，CommonsChunkPlugin 大致使用方法如下：
+
+```
+const CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
+
+entry:{
+  pageA:'./pageA.js',
+  pageB:'./pageB.js'  
+},
+plugins:[
+    new CommonsChunkPlugin({
+      // 从哪些 Chunk 中提取
+      chunks: ['pageA', 'pageB'],
+      // 提取出的公共部分形成一个新的 Chunk，这个新 Chunk 的名称
+      name: 'common'
+    })
+]
+```
 
 十、HTML压缩
 
@@ -381,8 +401,32 @@ new HtmlWebpackPlugin({
 
 十一、JS压缩
 
+webpack 4 可以通过 "mode" 配置选项轻松切换到压缩输出，只需设置为 "production",也可以在命令行接口中使用 --optimize-minimize 标记， webpack 会内部调用 UglifyJSPlugin。
+
+```javascript
+const path = require('path');
+
+module.exports = {
+  entry: './src/index.js',
+  output: {
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, 'dist')
+    },
+  mode: "production"
+};
 ```
-new webpack.optimize.UglifyJsPlugin()
+也可以在配置将optimization.minimize设置为true。
+```
+module.exports={
+    entry:'./src/main.js',
+    output: {
+        filename: "bundle.js",
+        path:path.resolve('public')
+    },
+    optimization:{
+        minimize:true
+    }
+}
 ```
 
 十二、noParse
@@ -406,6 +450,16 @@ module: {
   }  
 }
 ```
+
+十三、tree shaking
+
+tree shaking 是一个术语，通常用于描述移除 JavaScript 上下文中的未引用代码(dead-code)。它依赖于 ES2015 模块系统中的静态结构特性，例如 import 和 export。
+
+为了学会使用 tree shaking，你必须……
+
+- 使用 ES2015 模块语法（即 import 和 export）。
+- 在项目 package.json 文件中，添加一个 "sideEffects" 入口。
+- 引入一个能够删除未引用代码(dead code)的压缩工具(minifier)（例如 UglifyJSPlugin——生产环境中将自动调用UglifyJSPlugin删除冗余的代码段）。 
 
 #### Webpack 4 的一些注意点
 
