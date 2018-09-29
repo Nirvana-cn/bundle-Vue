@@ -302,7 +302,7 @@ module.exports = {
 
 九、提取公共代码
 
-在webpack4之前，提取公共代码都是通过一个叫CommonsChunkPlugin的插件来办到的。到了4以后，内置了一个一模一样的功能，而且起了一个好听的名字叫“优化”
+在webpack4之前，提取公共代码都是通过一个叫CommonsChunkPlugin的插件来办到的。到了4以后，内置了一个一模一样的功能，而且起了一个好听的名字叫“优化”,[配置细节看官方文档](https://webpack.js.org/plugins/split-chunks-plugin/#defaults)
 
 ```
 // 假设a.js和b.js都同时引入了jquery.js和一个写好的utils.js
