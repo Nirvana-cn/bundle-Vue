@@ -10,7 +10,8 @@ module.exports={
         path:path.resolve('public'),
         filename:'bundle.js'
     },
-    mode:'development',
+    devtool:'source-map',
+    mode:'production',
     devServer: {
         contentBase:'./public',
         host:'localhost',

@@ -26,3 +26,4 @@ let app = new Vue({
     router,
     store
 })
+console.log(aa)
