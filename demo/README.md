@@ -82,7 +82,21 @@ getComponent().then(component => {
 
 注意：在注释中使用了 `webpackChunkName`。这样做会导致我们的 `bundle` 被命名为 `lodash.bundle.js`。
 
+** 对于按需加载或加载外部资源（如图片、文件等）来说，`output.publicPath` 是很重要的选项。如果指定了一个错误的值，则在加载这些资源时会收到 `404` 错误，因此在使用`import()`时需要特别注意`output.publicPath`配置。
+
 ### 3.懒加载
+
+
+# Tree shaking
+
+## JS Tree shaking
+
+在`webpack v4`中，只需要配置`mode`为`"production"`，即可显式激活 `UglifyjsWebpackPlugin` 插件，项目中没有使用的代码会在打包时候丢掉。
+
+`JS` 的 `Tree Shaking` 依赖的是 `ES2015`的模块系统，因此对于第三方模块，请注意库的写法是否符合 `es` 模板系统规范。
+
+## CSS Tree shaking
+
 
 
 
