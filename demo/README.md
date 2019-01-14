@@ -1,4 +1,4 @@
-# 代码分离
+# 一、代码分离
 
 ## 意义和应用场景
 
@@ -87,7 +87,7 @@ getComponent().then(component => {
 ### 3.懒加载
 
 
-# Tree shaking
+# 二、Tree shaking
 
 ## JS Tree shaking
 
@@ -96,6 +96,66 @@ getComponent().then(component => {
 `JS` 的 `Tree Shaking` 依赖的是 `ES2015`的模块系统，因此对于第三方模块，请注意库的写法是否符合 `es` 模板系统规范。
 
 ## CSS Tree shaking
+
+# 三、图片处理
+
+## 图片编码
+
+使用`url-loader`可以对图片进行`base64`编码，把图片打包到`js`文件中，减少文件请求。
+
+```javascript
+{
+    test: /\.(png|jpg|jpeg|gif)$/,
+    use: [
+        {
+            loader: "url-loader",
+            options: {
+                name: "[name]-[hash:5].min.[ext]",
+                limit: 10000,
+                publicPath: "static/",
+                outputPath: "static/"
+            }
+        }
+    ]
+}
+```
+
+## 图片压缩
+
+使用`img-loader`配合`imagemin`可以对图片进行压缩，对于不同类型的图片需要调用相应的压缩插件对图片进行处理。
+
+```javascript
+{
+    test: /\.(png|jpg|jpeg|gif)$/,
+    use: [
+        {
+            loader: "img-loader",
+            options: {
+                plugins: [
+                    require("imagemin-pngquant")({
+                        quality: "80" // the quality of zip
+                    }),
+                    require('imagemin-mozjpeg')({
+                        quality: "30"
+                    })
+                ]
+            }
+        }
+    ]
+}
+```
+
+## 图片拼接
+
+使用`postcss-loader`和`postcss-sprites`则用来合成雪碧图，雪碧图是为了减少网络请求，所以被处理雪碧图的图片多为各式各样的 `logo` 或者大小相等的小图片。而对于大图片，还是不推荐使用雪碧图。
+
+# 四、dev-server
+
+需要在package.json文件中编写如下配置
+
+```
+"dev": "webpack-dev-server --open"
+```
 
 
 
